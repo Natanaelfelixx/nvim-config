@@ -1,4 +1,4 @@
-" Vim-Plug Config
+  " Vim-Plug Config
 call plug#begin('~/.vim/plugged')
 Plug 'scrooloose/nerdtree'
 Plug 'vim-airline/vim-airline'
@@ -16,4 +16,16 @@ nmap <leader>/ :NERDTreeToggle<CR>
 nmap <leader>s :w<CR>
 nmap <leader>sq :wq<CR>
 
-command! -nargs=1 Pushatudo execute 'Git add .' | execute 'Git commit -m "' . <q-args> . '"' | execute 'Git push origin $(git branch --show-current)'
+function! GitCommitPush(msg)
+  if a:msg == ''
+    echo "Commit message required"
+    return
+  endif
+  let l:branch = system('git rev-parse --abbrev-ref HEAD')
+  let l:branch = substitute(l:branch, '\n', '', 'g')
+  execute '!git add .'
+  execute '!git commit -m ' . a:msg . ''
+  execute '!git push origin ' . l:branch
+endfunction
+
+command! -nargs=1 Pushatudo call GitCommitPush(<f-args>)
